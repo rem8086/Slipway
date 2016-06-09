@@ -1,0 +1,79 @@
+﻿@model ShipwayStatus.Models.Shipway
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>TableShipway</title>
+</head>
+<body>
+    <div> 
+        <div style="text-align:right;font-family:'Times New Roman';font-size:16pt;">
+            <p>Сейчас:@DateTime.Now</p>
+            <p>Дата пересчета графика:@Model.GetCurrentDate()</p>
+        </div>
+        @{ 
+            string[] phasesArray = new string[] {
+                    "Пункты подключения",
+                    "Футляры электроснабжения",
+                    "Вертикальная планировка",
+                    "Щебеночное основание",
+                    "Бетонная подготовка",
+                    "Армирование плиты",
+                    "Установка опалубки",
+                    "Бетонирование плиты",
+                    "Бетонирование покрытия"
+                    };
+        }
+        <table border="1" bordercolor="black" cellspacing="0" >
+            <tr>
+                <td>
+                    Номер плиты
+                </td>
+                @{
+                    for (int i = 0; i < phasesArray.Count(); i++)
+                    {
+                        <td style="text-align:center;">
+                            @phasesArray[i]
+                        </td>
+                    }
+                }
+            </tr>
+            @{ 
+                List<Pad> pl = Model.GetPads().OrderByDescending(s => s.Axis).ToList<Pad>();
+                foreach (Pad p in pl)
+                {
+                    <tr>
+                        <td style="text-align:center; font-weight:bold;">
+                            @Html.Raw(p.Name+p.Axis)
+                        </td>
+                        @{ 
+                            for (int i = 0; i < phasesArray.Count(); i++)
+                            {
+                                double percent = Model.GetPadPercentByPhase(p.Name, p.Axis, phasesArray[i]);
+                                <td style="background-color:rgb(@Html.Raw(Convert.ToInt32(255-percent*255)),@Html.Raw(Convert.ToInt32(percent*255)),0);
+                                    text-align:right; position:relative; padding:0px;">
+                                    
+                                    <div style="position:absolute; top:10%; height:70%;  
+                                         background:linear-gradient(to right, #0f0, #fff);
+                                    width:@Html.Raw(Convert.ToInt32(percent * 100))%
+                                    ">
+                                    </div>
+                                    <div style="position:inherit; float:right; font-weight:bold;">
+                                        @Html.Raw(String.Format("{0:0}%", percent * 100))
+                                    </div>
+                                </td>
+                            }
+                        }
+                    </tr>
+                }                
+            }
+        </table>
+    </div>
+</body>
+</html>

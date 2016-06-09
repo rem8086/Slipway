@@ -1,0 +1,58 @@
+﻿@model ShipwayStatus.Models.Slipway
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" type="text/css" href="~/Style.css">
+    <title>Index</title>
+</head>
+<body>
+    <div id="datetext">
+        <p>Сейчас:@DateTime.Now</p> 
+        <p>Дата пересчета графика:@Model.GetCurrentDate()</p>
+    </div>
+    <p>@Html.ActionLink("Табличное представление","TableSlipway")</p>
+    <table>
+        @for (int i = 2; i <= 17; i++)
+        {
+            <tr>
+                <td>
+                    <div class="pad @Model.GetPadPhase("У", i)" style="width:@Html.Raw(Model.GetPadPercent("П", i)*100)%;">
+                        <h3>@String.Format("П" + i)</h3>
+                    </div>
+                </td>
+                <td>
+                    @{ 
+                        string tPhase = Model.GetPadPhase("Т", i);
+                        if ((tPhase == "pipes") || (tPhase == "wells")) { tPhase = ""; }
+                    }
+                    <div class="pad @tPhase" style="width:@Html.Raw(Model.GetPadPercent("Т", i)*100)%;">
+                        <h3>@String.Format("Т" + i)</h3>
+                    </div>
+                    <div class="pipes" style="width:70%; background-color: rgba(85, 85, 85, @Model.GetPadPercentByPhase("Т", i, "pipes")); ">
+                    </div>
+                    <div class="wells" style="right:30%; background-color: rgba(85, 85, 85, @Model.GetPadPercentByPhase("Т", i,"wells")); ">
+                    </div>
+                    <div class="wells" style="right:70%; background-color: rgba(85, 85, 85, @Model.GetPadPercentByPhase("Т", i, "wells"));">
+                    </div>
+                </td> 
+                <td>
+                    <div class="pad @Model.GetPadPhase("У", i)" style="width:@Html.Raw(Model.GetPadPercent("У", i)*100)%;">
+                        <h3>@String.Format("У" + i)</h3>
+                    </div>
+                    <div class="pipes" style="background-color: rgba(85, 85, 85, @Model.GetPadPercentByPhase("Т", i, "pipes")); ">
+                    </div>
+
+            </td>
+
+</tr>
+        }
+    </table>
+</body>
+</html>

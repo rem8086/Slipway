@@ -1,0 +1,47 @@
+﻿@model ShipwayStatus.Models.Shipway
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" type="text/css" href="~/Style.css">
+    <title>Index</title>
+</head>
+<body>
+    <table>
+        @for (int i = 2; i <= 17; i++)
+        {
+            <tr>
+                <td>
+                    <div class="pad @Model.GetPadPhase("П", i)" style="width:@Model.GetPadPercent("П", i)%;">
+                        <h3>@String.Format("П"+i)</h3>
+                    </div>
+                </td>
+                <td>
+                    <div class="pad @Model.GetPadPhase("Т", i)" style="width:@Model.GetPadPercent("Т", i)%;">
+                        <h3>@String.Format("Т" + i)</h3>
+                    </div>
+                    <div class="@Model.GetPadPhase("ЭС",i)" style="width:70%;background-color:#555555; opacity:@Model.GetPadPercent("ЭС",i)%;">
+                    </div>
+                    <div class="@Model.GetPadPhase("ПП",i)" style="right:30%;">
+                    </div>
+                    <div class="@Model.GetPadPhase("ПП",i)" style="right:70%;">
+                    </div>
+                </td>
+                <td>
+                    <div class="pad @Model.GetPadPhase("У", i)" style="width:@Model.GetPadPercent("У", i)%;">
+                        <h3>@String.Format("У" + i)</h3>
+                    </div>
+                    <div class="@Model.GetPadPhase("ЭС",i)" style="background-color:#555555; opacity:@Model.GetPadPercent("ЭС",i)%;">
+                    </div>
+                </td>
+            </tr>
+        }
+    </table>
+</body>
+</html>
