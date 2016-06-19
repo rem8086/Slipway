@@ -15,6 +15,7 @@ namespace ShipwayStatus
     {
         public int Axis { get; set; }
         public string Name { get; set; }
+        public string Performer { get; set; }
         List<PadPhase> phases;
 
         public Pad()
@@ -60,7 +61,7 @@ namespace ShipwayStatus
 
         public override string ToString()
         {
-            string str = String.Format("Axis: {0}, Name: {1} \n", Axis, Name);
+            string str = String.Format("Axis: {0}, Name: {1}, Performer: {2} \n", Axis, Name, Performer);
             foreach (PadPhase p in phases)
             {
                 str += String.Format("{0} = {1}%\n",p.Name, p.Percent);

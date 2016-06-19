@@ -19,6 +19,7 @@
         </div>
         @{ 
             string[] phasesArray = new string[] {
+                    "Засыпка скальным грунтом",
                     "Пункты подключения",
                     "Футляры электроснабжения",
                     "Вертикальная планировка",
@@ -32,8 +33,11 @@
         }
         <table border="1" bordercolor="black" cellspacing="0" >
             <tr>
-                <td>
+                <td style="text-align:center;">
                     Номер плиты
+                </td>
+                <td style="text-align:center;">
+                    Исполнитель
                 </td>
                 @{
                     for (int i = 0; i < phasesArray.Count(); i++)
@@ -50,7 +54,19 @@
                 {
                     <tr>
                         <td style="text-align:center; font-weight:bold;">
-                            @Html.Raw(p.Name+p.Axis)
+                            @Html.Raw(p.Name + p.Axis)
+                        </td>
+                        <td style="text-align:center; font-weight:normal;">                                                        
+                            @switch (p.Performer)
+                            {
+                            case "1": @Html.Raw("ФНК"); break;
+                            case "3": @Html.Raw("ФНК"); break;
+                            case "101": @Html.Raw("ООО Азимут"); break;
+                            case "102": @Html.Raw("ПромТехСнаб ООО"); break;
+                            case "103": @Html.Raw("Подрядчик N"); break;
+                            case "104": @Html.Raw("МонолитСпецСтрой"); break;
+                            default: @Html.Raw(p.Performer); break;
+                            }
                         </td>
                         @{ 
                             for (int i = 0; i < phasesArray.Count(); i++)

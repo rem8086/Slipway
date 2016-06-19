@@ -29,6 +29,7 @@ namespace ShipwayStatus.Controllers
             {
                 {"wells", "Устройство пунктов подключения"},
                 {"pipes", "Устройство футляров электроснабжения"},
+                {"rocky_ground", "Обратная засыпка скальным грунтом"},
                 {"planing", "Вертикальная планировка участка плита"},
                 {"stone_base",  "Устройство щебеночного основания плита"},
                 {"concrete_prepare",  "Устройство бетонной подготовки плита"},
@@ -40,7 +41,7 @@ namespace ShipwayStatus.Controllers
 
             DataPull dp = new DataPull("sqltest", "PMDB_EPPM", "PMDB_EPPM_privuser", "privuser123");
             string date = dp.ExecuteRecalcDate("EPC.3 ИН-0748.15");
-            List<Pad> shipway = dp.ExecuteQuery(phases, "EPC.3 ИН-0748.15");
+            List<Pad> shipway = dp.ExecuteQuery(phases, "EPC.3 ИН-0748.15", "Бетонирование плиты");
             Slipway s = new Slipway(shipway, date);
             return View(s);
         }
@@ -57,12 +58,13 @@ namespace ShipwayStatus.Controllers
                 {"Бетонирование плиты", "Бетонирование плиты"},
                 {"Бетонирование покрытия", "Бетонирование покрытия плиты"},
                 {"Пункты подключения", "Устройство пунктов подключения"},
-                {"Футляры электроснабжения", "Устройство футляров электроснабжения"}
+                {"Футляры электроснабжения", "Устройство футляров электроснабжения"},
+                {"Засыпка скальным грунтом", "Обратная засыпка скальным грунтом"}
             };
 
             DataPull dp = new DataPull("sqltest", "PMDB_EPPM", "PMDB_EPPM_privuser", "privuser123");
             string date = dp.ExecuteRecalcDate("EPC.3 ИН-0748.15");
-            List<Pad> shipway = dp.ExecuteQuery(phases, "EPC.3 ИН-0748.15");
+            List<Pad> shipway = dp.ExecuteQuery(phases, "EPC.3 ИН-0748.15", "Бетонирование плиты");
             Slipway s = new Slipway(shipway, date);
             return View(s);
         }

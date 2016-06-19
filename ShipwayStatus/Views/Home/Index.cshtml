@@ -2,6 +2,19 @@
 
 @{
     Layout = null;
+    Dictionary<string, string> phases = new Dictionary<string, string>
+            {
+                {"wells", "Пункты подключения"},
+                {"pipes", "Футляры электроснабжения"},
+                {"rocky_ground", "Засыпка скальным грунтом"},
+                {"planing", "Вертикальная планировка"},
+                {"stone_base",  "Щебеночное основание"},
+                {"concrete_prepare",  "Бетонная подготовка"},
+                {"reinforcement",  "Армирование"},
+                //"Установка опалубки плиты",
+                {"concreting", "Бетонирование плиты"},
+                {"covering", "Бетонирование покрытия"}
+            };
 }
 
 <!DOCTYPE html>
@@ -17,41 +30,46 @@
         <p>Сейчас:@DateTime.Now</p> 
         <p>Дата пересчета графика:@Model.GetCurrentDate()</p>
     </div>
-    <p>@Html.ActionLink("Табличное представление","TableSlipway")</p>
+    <p>@Html.ActionLink("Табличное представление", "TableSlipway")</p>
     <table>
+        @{string[] padTypes = new string[3] {"П","Т","У"}; }
         @for (int i = 2; i <= 17; i++)
         {
             <tr>
-                <td>
-                    <div class="pad @Model.GetPadPhase("У", i)" style="width:@Html.Raw(Model.GetPadPercent("П", i)*100)%;">
-                        <h3>@String.Format("П" + i)</h3>
-                    </div>
-                </td>
-                <td>
-                    @{ 
-                        string tPhase = Model.GetPadPhase("Т", i);
-                        if ((tPhase == "pipes") || (tPhase == "wells")) { tPhase = ""; }
-                    }
-                    <div class="pad @tPhase" style="width:@Html.Raw(Model.GetPadPercent("Т", i)*100)%;">
-                        <h3>@String.Format("Т" + i)</h3>
-                    </div>
-                    <div class="pipes" style="width:70%; background-color: rgba(85, 85, 85, @Model.GetPadPercentByPhase("Т", i, "pipes")); ">
-                    </div>
-                    <div class="wells" style="right:30%; background-color: rgba(85, 85, 85, @Model.GetPadPercentByPhase("Т", i,"wells")); ">
-                    </div>
-                    <div class="wells" style="right:70%; background-color: rgba(85, 85, 85, @Model.GetPadPercentByPhase("Т", i, "wells"));">
-                    </div>
-                </td> 
-                <td>
-                    <div class="pad @Model.GetPadPhase("У", i)" style="width:@Html.Raw(Model.GetPadPercent("У", i)*100)%;">
-                        <h3>@String.Format("У" + i)</h3>
-                    </div>
-                    <div class="pipes" style="background-color: rgba(85, 85, 85, @Model.GetPadPercentByPhase("Т", i, "pipes")); ">
-                    </div>
-
-            </td>
-
-</tr>
+                @for (int j = 0; j < 3; j++)
+                {
+                    <td>
+                        @{
+                            string currentPhase = Model.GetPadPhase(padTypes[j], i);
+                            int currentPhasePercent = Convert.ToInt32(Model.GetPadPercent(padTypes[j], i) * 100);
+                            string currentPhaseClass = "";
+                            if ((currentPhase != "pipes") && (currentPhase != "wells")) { currentPhaseClass = currentPhase; }
+                        }
+                        <div class="pad @currentPhaseClass" 
+                             style="width:@currentPhasePercent%;"> 
+                        </div>
+                        <h3>@String.Format(padTypes[j] + i)</h3>
+                        @if (currentPhasePercent > 0)
+                        {
+                            <h4>@String.Format(phases[currentPhase] + ": " + currentPhasePercent + "%")</h4>
+                        }
+                        @if (padTypes[j] == "Т")
+                        {
+                            <div class="pipes" style="width:70%; background-color: rgba(85, 85, 85, @Model.GetPadPercentByPhase("Т", i, "pipes")); ">
+                            </div>
+                            <div class="wells" style="right:30%; background-color: rgba(85, 85, 85, @Model.GetPadPercentByPhase("Т", i,"wells")); ">
+                            </div>
+                            <div class="wells" style="right:70%; background-color: rgba(85, 85, 85, @Model.GetPadPercentByPhase("Т", i, "wells"));">
+                            </div>
+                        }
+                        @if (padTypes[j] == "У")
+                        {
+                            <div class="pipes" style="background-color: rgba(85, 85, 85, @Model.GetPadPercentByPhase("Т", i, "pipes")); ">
+                            </div>
+                        }
+                    </td>
+                }
+            </tr>
         }
     </table>
 </body>

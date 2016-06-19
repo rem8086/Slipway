@@ -21,9 +21,9 @@ namespace ShipwayStatus
             scn = new SqlConnection(csb.ConnectionString);
         }
 
-        public List<Pad> ExecuteQuery(Dictionary<string, string> phases, string projectName)
+        public List<Pad> ExecuteQuery(Dictionary<string, string> phases, string projectName, string performerKeyWork)
         {
-            string strSql = @"select * from 
+            string strSql = @"select performer.performer, pvt.* from 
                                 (
 	                                select 
 		                                ac1.short_name as pad_num,
@@ -75,6 +75,31 @@ namespace ShipwayStatus
             strSql += @"[unknown]
 	                                )
                                 ) pvt
+                                left join (
+                                select 
+                                    ac1.short_name as pad_num,
+                                    ac2.short_name as pad_name,
+                                    ac3.short_name as performer
+                                from TASK t
+		                                inner join PROJECT p on p.proj_id = t.proj_id
+
+		                                inner join TASKACTV ta1 on ta1.task_id = t.task_id
+		                                inner join ACTVCODE ac1 on ac1.actv_code_id = ta1.actv_code_id
+		                                inner join ACTVTYPE at1 on at1.actv_code_type_id = ac1.actv_code_type_id
+
+		                                inner join TASKACTV ta2 on ta2.task_id = t.task_id
+		                                inner join ACTVCODE ac2 on ac2.actv_code_id = ta2.actv_code_id
+		                                inner join ACTVTYPE at2 on at2.actv_code_type_id = ac2.actv_code_type_id
+		
+		                                left join TASKACTV ta3 on ta3.task_id = t.task_id 
+		                                left join ACTVCODE ac3 on ac3.actv_code_id = ta3.actv_code_id
+		                                left join ACTVTYPE at3 on at3.actv_code_type_id = ac3.actv_code_type_id
+                                where at3.actv_code_type='Участок'
+                                and at1.actv_code_type = 'Ось' 
+                                and at2.actv_code_type = 'Плита'
+                                and p.proj_short_name = '"+projectName+
+                                "' and t.task_name like '"+performerKeyWork+
+                               @"%') performer on performer.pad_name = pvt.pad_name and performer.pad_num = pvt.pad_num
                                 order by pad_num, pad_name";
             scn.Open();
             SqlCommand sc = new SqlCommand(strSql, scn);
@@ -83,9 +108,10 @@ namespace ShipwayStatus
             while (myDataReader.Read())
             {
                 Pad pad = new Pad();
-                pad.Axis = Convert.ToInt32(myDataReader.GetValue(0));
-                pad.Name = myDataReader.GetValue(1).ToString();
-                for (int i = 2; i < myDataReader.FieldCount; i++)
+                pad.Performer = myDataReader.GetValue(0).ToString();
+                pad.Axis = Convert.ToInt32(myDataReader.GetValue(1));
+                pad.Name = myDataReader.GetValue(2).ToString();
+                for (int i = 3; i < myDataReader.FieldCount; i++)
                 {
                     PadPhase pp = new PadPhase()
                     {
